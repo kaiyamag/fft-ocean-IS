@@ -156,11 +156,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wavesGenerator: {fileID: 77222649}
   viewer: {fileID: 963194228}
-  oceanMaterial: {fileID: 2100000, guid: 79f16f7e2e961cc46828737b584510ee, type: 2}
+  oceanMaterial: {fileID: 2100000, guid: 60084a5087d3930439714dff5c62fd18, type: 2}
   updateMaterialProperties: 0
   showMaterialLods: 0
   lengthScale: 15
-  vertexDensity: 30
+  vertexDensity: 5
   clipLevels: 8
   skirtSize: 55.4
 --- !u!114 &77222649
