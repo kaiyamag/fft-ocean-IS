@@ -142,8 +142,8 @@ public class OceanGeometry : MonoBehaviour
 
         for (int i = 0; i < clipLevels; i++)
         {
-            rings[i].Transform.gameObject.SetActive(i < activeLevels);
-            trims[i].Transform.gameObject.SetActive(i < activeLevels);
+            //rings[i].Transform.gameObject.SetActive(i < activeLevels);
+            //trims[i].Transform.gameObject.SetActive(i < activeLevels);
             if (i >= activeLevels) continue;
 
             scale = ClipLevelScale(i, activeLevels);
@@ -155,18 +155,18 @@ public class OceanGeometry : MonoBehaviour
             int shiftZ = previousSnappedPosition.z - snappedPosition.z < float.Epsilon ? 1 : 0;
             trimPosition += shiftX * (k + 1) * scale * Vector3.right;
             trimPosition += shiftZ * (k + 1) * scale * Vector3.forward;
-            trims[i].Transform.position = trimPosition;
-            trims[i].Transform.rotation = trimRotations[shiftX + 2 * shiftZ];
-            trims[i].Transform.localScale = new Vector3(scale, 1, scale);
+            //trims[i].Transform.position = trimPosition;
+            //trims[i].Transform.rotation = trimRotations[shiftX + 2 * shiftZ];
+            //trims[i].Transform.localScale = new Vector3(scale, 1, scale);
 
-            rings[i].Transform.position = snappedPosition + centerOffset;
-            rings[i].Transform.localScale = new Vector3(scale, 1, scale);
+            //rings[i].Transform.position = snappedPosition + centerOffset;
+            //rings[i].Transform.localScale = new Vector3(scale, 1, scale);
             previousSnappedPosition = snappedPosition;
         }
 
         scale = lengthScale * 2 * Mathf.Pow(2, clipLevels);
-        skirt.Transform.position = new Vector3(-1, 0, -1) * scale * (skirtSize + 0.5f - 0.5f / GridSize()) + previousSnappedPosition;
-        skirt.Transform.localScale = new Vector3(scale, 1, scale);
+        //skirt.Transform.position = new Vector3(-1, 0, -1) * scale * (skirtSize + 0.5f - 0.5f / GridSize()) + previousSnappedPosition;
+        //skirt.Transform.localScale = new Vector3(scale, 1, scale);
     }
 
     int ActiveLodlevels()
@@ -223,6 +223,9 @@ public class OceanGeometry : MonoBehaviour
 
         int k = GridSize();
         center = InstantiateElement("Center", CreatePlaneMesh(2 * k, 2 * k, 1, Seams.All), materials[materials.Length - 1]);
+        
+        // TESTING
+        /*
         Mesh ring = CreateRingMesh(k, 1);
         Mesh trim = CreateTrimMesh(k, 1);
         for (int i = 0; i < clipLevels; i++)
@@ -231,6 +234,7 @@ public class OceanGeometry : MonoBehaviour
             trims.Add(InstantiateElement("Trim " + i, trim, materials[materials.Length - 1]));
         }
         skirt = InstantiateElement("Skirt", CreateSkirtMesh(k, skirtSize), materials[materials.Length - 1]);
+        */
     }
 
     Element InstantiateElement(string name, Mesh mesh, Material mat)
