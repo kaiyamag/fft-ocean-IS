@@ -81,7 +81,7 @@ public class OceanGeometry : MonoBehaviour
         {
             InstantiateMeshes();
             previousVertexDensity = vertexDensity;
-            previousSkirtSize = skirtSize;
+            //previousSkirtSize = skirtSize;
         }
 
         UpdatePositions();
@@ -130,6 +130,9 @@ public class OceanGeometry : MonoBehaviour
         return materials[2];
     }
 
+    /**
+    * Update position of ocean mesh objects based on camera (viewer) movement
+    */
     void UpdatePositions()
     {
         int k = GridSize();
@@ -142,6 +145,7 @@ public class OceanGeometry : MonoBehaviour
 
         for (int i = 0; i < clipLevels; i++)
         {
+            // DISABLED TILING
             //rings[i].Transform.gameObject.SetActive(i < activeLevels);
             //trims[i].Transform.gameObject.SetActive(i < activeLevels);
             if (i >= activeLevels) continue;
@@ -171,7 +175,9 @@ public class OceanGeometry : MonoBehaviour
 
     int ActiveLodlevels()
     {
-        return clipLevels - Mathf.Clamp((int)Mathf.Log((1.7f * Mathf.Abs(viewer.position.y) + 1) / lengthScale, 2), 0, clipLevels);
+        // DISABLE TILING
+        return clipLevels;
+        //return clipLevels - Mathf.Clamp((int)Mathf.Log((1.7f * Mathf.Abs(viewer.position.y) + 1) / lengthScale, 2), 0, clipLevels);
     }
 
     float ClipLevelScale(int level, int activeLevels)
@@ -224,7 +230,7 @@ public class OceanGeometry : MonoBehaviour
         int k = GridSize();
         center = InstantiateElement("Center", CreatePlaneMesh(2 * k, 2 * k, 1, Seams.All), materials[materials.Length - 1]);
         
-        // TESTING
+        // DISABLE TILING
         /*
         Mesh ring = CreateRingMesh(k, 1);
         Mesh trim = CreateTrimMesh(k, 1);
