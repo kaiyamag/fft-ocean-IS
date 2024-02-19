@@ -132,6 +132,7 @@ float ShortWavesFade(float kLength, SpectrumParameters pars)
 [numthreads(8, 8, 1)]
 void CalculateInitialSpectrum(uint3 id : SV_DispatchThreadID)
 {
+	// Setting up a rotating vector from the center
 	float deltaK = 2 * PI / LengthScale;
 	int nx = id.x - Size / 2;
 	int nz = id.y - Size / 2;
@@ -150,6 +151,8 @@ void CalculateInitialSpectrum(uint3 id : SV_DispatchThreadID)
 		if (Spectrums[1].scale > 0)
 			spectrum += JONSWAP(omega, GravityAcceleration, Depth, Spectrums[1])
 			* DirectionSpectrum(kAngle, omega, Spectrums[1]) * ShortWavesFade(kLength, Spectrums[1]);
+		// Tessendorf's wave equation: random complex number * sqrt(2 * spectrum)...
+		// H0K is the amplitude at k (not time dependent)
 		H0K[id.xy] = float2(Noise[id.xy].x, Noise[id.xy].y)
 			* sqrt(2 * spectrum * abs(dOmegadk) / kLength * deltaK * deltaK);
 	}
