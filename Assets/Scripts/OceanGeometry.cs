@@ -23,10 +23,10 @@ public class OceanGeometry : MonoBehaviour
     [SerializeField, Range(0, 100)]
     float skirtSize = 50;
 
-    List<Element> rings = new List<Element>();
-    List<Element> trims = new List<Element>();
+    //List<Element> rings = new List<Element>();
+    //List<Element> trims = new List<Element>();
     Element center;
-    Element skirt;
+    //Element skirt;
     Quaternion[] trimRotations;
     int previousVertexDensity;
     float previousSkirtSize;
@@ -76,12 +76,12 @@ public class OceanGeometry : MonoBehaviour
 
     private void Update()
     {
-        if (rings.Count != clipLevels || trims.Count != clipLevels
-            || previousVertexDensity != vertexDensity || !Mathf.Approximately(previousSkirtSize, skirtSize))
+        if (/*rings.Count != clipLevels || trims.Count != clipLevels
+            || */ previousVertexDensity != vertexDensity /*|| !Mathf.Approximately(previousSkirtSize, skirtSize)*/)
         {
             InstantiateMeshes();
             previousVertexDensity = vertexDensity;
-            //previousSkirtSize = skirtSize;
+            // previousSkirtSize = skirtSize;
         }
 
         UpdatePositions();
@@ -112,11 +112,13 @@ public class OceanGeometry : MonoBehaviour
         int activeLevels = ActiveLodlevels();
         center.MeshRenderer.material = GetMaterial(clipLevels - activeLevels - 1);
 
+        /*
         for (int i = 0; i < rings.Count; i++)
         {
             rings[i].MeshRenderer.material = GetMaterial(clipLevels - activeLevels + i);
             trims[i].MeshRenderer.material = GetMaterial(clipLevels - activeLevels + i);
         }
+        */
     }
 
     Material GetMaterial(int lodLevel)
@@ -146,8 +148,8 @@ public class OceanGeometry : MonoBehaviour
         for (int i = 0; i < clipLevels; i++)
         {
             // DISABLED TILING
-            //rings[i].Transform.gameObject.SetActive(i < activeLevels);
-            //trims[i].Transform.gameObject.SetActive(i < activeLevels);
+            // rings[i].Transform.gameObject.SetActive(i < activeLevels);
+            // trims[i].Transform.gameObject.SetActive(i < activeLevels);
             if (i >= activeLevels) continue;
 
             scale = ClipLevelScale(i, activeLevels);
@@ -159,12 +161,12 @@ public class OceanGeometry : MonoBehaviour
             int shiftZ = previousSnappedPosition.z - snappedPosition.z < float.Epsilon ? 1 : 0;
             trimPosition += shiftX * (k + 1) * scale * Vector3.right;
             trimPosition += shiftZ * (k + 1) * scale * Vector3.forward;
-            //trims[i].Transform.position = trimPosition;
-            //trims[i].Transform.rotation = trimRotations[shiftX + 2 * shiftZ];
-            //trims[i].Transform.localScale = new Vector3(scale, 1, scale);
+            // trims[i].Transform.position = trimPosition;
+            // trims[i].Transform.rotation = trimRotations[shiftX + 2 * shiftZ];
+            // trims[i].Transform.localScale = new Vector3(scale, 1, scale);
 
-            //rings[i].Transform.position = snappedPosition + centerOffset;
-            //rings[i].Transform.localScale = new Vector3(scale, 1, scale);
+            // rings[i].Transform.position = snappedPosition + centerOffset;
+            // rings[i].Transform.localScale = new Vector3(scale, 1, scale);
             previousSnappedPosition = snappedPosition;
         }
 
@@ -224,8 +226,8 @@ public class OceanGeometry : MonoBehaviour
             if (child != transform)
                 Destroy(child.gameObject);
         }
-        rings.Clear();
-        trims.Clear();
+        // rings.Clear();
+        // trims.Clear();
 
         int k = GridSize();
         center = InstantiateElement("Center", CreatePlaneMesh(2 * k, 2 * k, 1, Seams.All), materials[materials.Length - 1]);
