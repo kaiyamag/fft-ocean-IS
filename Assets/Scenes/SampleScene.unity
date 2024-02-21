@@ -160,9 +160,8 @@ MonoBehaviour:
   updateMaterialProperties: 0
   showMaterialLods: 0
   lengthScale: 15
-  vertexDensity: 30
+  vertexDensity: 8
   clipLevels: 8
-  skirtSize: 55.4
 --- !u!114 &77222649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,7 +177,7 @@ MonoBehaviour:
   size: 256
   wavesSettings: {fileID: 11400000, guid: a15d9b9d6a919584db82c8af30e854c9, type: 2}
   alwaysRecalculateInitials: 0
-  lengthScale0: 5
+  lengthScale0: 250
   lengthScale1: 17
   lengthScale2: 5
   fftShader: {fileID: 7200000, guid: 38e7049002205c24c8328830bc846265, type: 3}
@@ -505,7 +504,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7915ca7253583c74fa4102d33a8e80bd, type: 3}
   m_Name: 
