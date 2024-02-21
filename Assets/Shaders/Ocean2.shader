@@ -152,8 +152,9 @@
             // Simplified diffuse shader
             float3 viewDir = normalize(IN.viewVector);
             float fresnel = dot(worldNormal, viewDir);
-            o.Albedo = _Color;
-            o.Smoothness = 1;
+            o.Albedo = _Color + (0.1 * fresnel);
+            o.Smoothness = 1.0 - (0.01 * (0.1 * fresnel));
+            //o.Smoothness = 1;
             o.Metallic = 0;
 
             /*
