@@ -87,7 +87,7 @@ public class Profiler : MonoBehaviour
             if (fps > 0) {
                 // Add to average
                 fpsSum = fpsSum + fps;
-                Debug.Log("FPS: " + fps + ", sum: " + fpsSum );
+                //Debug.Log("FPS: " + fps + ", sum: " + fpsSum );
 
                 // Check min
                 if (fps < minFPS && fps >= 0) {
@@ -104,7 +104,7 @@ public class Profiler : MonoBehaviour
             if (drawTime > 0) {
                 // Add to average
                 drawTimeSum = drawTimeSum + drawTime;
-                Debug.Log("Draw Time: " + drawTime + ", sum: " + drawTimeSum );
+                //Debug.Log("Draw Time: " + drawTime + ", sum: " + drawTimeSum );
 
                 // Check min
                 if (drawTime < minDrawTime && drawTime >= 0) {
@@ -120,7 +120,7 @@ public class Profiler : MonoBehaviour
             if (combinedTime > 0) {
                 // Add to average
                 combinedTimeSum = combinedTimeSum + combinedTime;
-                Debug.Log("Combined time: " + combinedTime + ", sum: " + combinedTimeSum );
+                //Debug.Log("Combined time: " + combinedTime + ", sum: " + combinedTimeSum );
 
                 // Check min
                 if (combinedTime < minCombinedTime) {
@@ -129,6 +129,7 @@ public class Profiler : MonoBehaviour
                 
                 // Check max
                 if (combinedTime > maxCombinedTime) {
+                    //Debug.Log("Update max from " + calculateFPS(maxCombinedTime) + " to " + calculateFPS(combinedTime));
                     maxCombinedTime = combinedTime;
                 }
             }
@@ -142,10 +143,10 @@ public class Profiler : MonoBehaviour
                 avgCombinedTime = combinedTimeSum / (avgInterval / sampleInterval);
 
                 // Debug
-                Debug.Log("~~~~~Got average~~~~");
-                Debug.Log("Avg FPS = " + fpsSum + " / " + (avgInterval / sampleInterval) + " = " + avgFPS);
-                Debug.Log("Avg Draw Time = " + drawTimeSum + " / " + (avgInterval / sampleInterval) + " = " + avgDrawTime);
-                Debug.Log("Avg Combined Time = " + combinedTimeSum + " / " + (avgInterval / sampleInterval) + " = " + avgCombinedTime);
+                // Debug.Log("~~~~~Got average~~~~");
+                // Debug.Log("Avg FPS = " + fpsSum + " / " + (avgInterval / sampleInterval) + " = " + avgFPS);
+                // Debug.Log("Avg Draw Time = " + drawTimeSum + " / " + (avgInterval / sampleInterval) + " = " + avgDrawTime);
+                // Debug.Log("Avg Combined Time = " + combinedTimeSum + " / " + (avgInterval / sampleInterval) + " = " + avgCombinedTime);
 
                 // Reset averages
                 frameCount = 0;
@@ -163,10 +164,10 @@ public class Profiler : MonoBehaviour
             sb.AppendLine("--------------------");
             sb.AppendLine($"System Memory: {systemMemoryRecorder.LastValue / (1024 * 1024)} MB");
             sb.AppendLine();
-            sb.AppendLine($"Draw Time (Render Thread): {drawTime:F2} ms");        // Render Thread returns time in nanoseconds, convert to milliseconds
-            sb.AppendLine($"Avg. Draw Time: {avgDrawTime:F2} ms");
-            sb.AppendLine($"Min. Draw Time: {minDrawTime:F2} ms");
-            sb.AppendLine($"Max. Draw Time: {maxDrawTime:F2} ms");
+            sb.AppendLine($"FPS (Combined Threads): {calculateFPS(combinedTime):F0}");
+            sb.AppendLine($"Avg. FPS: {calculateFPS(avgCombinedTime):F0}");
+            sb.AppendLine($"Min FPS: {calculateFPS(maxCombinedTime):F0}");          // NOTE: Min FPS corresponds to max draw time and vice versa
+            sb.AppendLine($"Max FPS: {calculateFPS(minCombinedTime):F0}");
             sb.AppendLine();
             sb.AppendLine($"Draw Time (Combined Threads): {combinedTime:F2} ms");        
             sb.AppendLine($"Avg. Draw Time: {avgCombinedTime:F2} ms");
@@ -178,10 +179,12 @@ public class Profiler : MonoBehaviour
             sb.AppendLine($"Min FPS: {minFPS:F0}");
             sb.AppendLine($"Max FPS: {maxFPS:F0}");
             sb.AppendLine();
-            sb.AppendLine($"FPS (Combined Threads): {calculateFPS(combinedTime):F0}");
-            sb.AppendLine($"Avg. FPS: {calculateFPS(avgCombinedTime):F0}");
-            sb.AppendLine($"Min FPS: {calculateFPS(minCombinedTime):F0}");
-            sb.AppendLine($"Max FPS: {calculateFPS(maxCombinedTime):F0}");
+            sb.AppendLine($"Draw Time (Render Thread): {drawTime:F2} ms");        // Render Thread returns time in nanoseconds, convert to milliseconds
+            sb.AppendLine($"Avg. Draw Time: {avgDrawTime:F2} ms");
+            sb.AppendLine($"Min. Draw Time: {minDrawTime:F2} ms");
+            sb.AppendLine($"Max. Draw Time: {maxDrawTime:F2} ms");
+            sb.AppendLine();
+            
             // sb.AppendLine();
             // sb.AppendLine($"Main Thread FPS: {mainFPS:F0}");
             // sb.AppendLine($"Draw Time (Main Thread): {mainFPSRecorder.LastValue / 100.0 :F0} ms");
@@ -194,7 +197,7 @@ public class Profiler : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.TextArea(new Rect(10, 30, 250, 400), statsText);
+        GUI.TextArea(new Rect(10, 30, 300, 400), statsText);
     }
 
     /**
