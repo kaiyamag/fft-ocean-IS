@@ -16,7 +16,7 @@ public class OceanGeometry : MonoBehaviour
 
     [SerializeField]
     float lengthScale = 10;
-    [SerializeField, Range(1, 40)]
+    [SerializeField, Range(1, 512)] // UPDATED range from 40 to 512 for benchmarking
     int vertexDensity = 30;
     [SerializeField, Range(0, 8)]
     int clipLevels = 8;
