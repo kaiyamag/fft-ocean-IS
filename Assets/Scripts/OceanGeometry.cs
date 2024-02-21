@@ -21,7 +21,7 @@ public class OceanGeometry : MonoBehaviour
     [SerializeField, Range(0, 8)]
     int clipLevels = 8;
     [SerializeField, Range(0, 100)]
-    float skirtSize = 50;
+    //float skirtSize = 50;
 
     //List<Element> rings = new List<Element>();
     //List<Element> trims = new List<Element>();
@@ -29,7 +29,7 @@ public class OceanGeometry : MonoBehaviour
     //Element skirt;
     Quaternion[] trimRotations;
     int previousVertexDensity;
-    float previousSkirtSize;
+    //float previousSkirtSize;
 
     Material[] materials;
 
