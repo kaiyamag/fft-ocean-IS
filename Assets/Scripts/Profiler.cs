@@ -21,52 +21,6 @@ public class Profiler : MonoBehaviour
     private double drawTimeSum, avgDrawTime, minDrawTime, maxDrawTime;
     private double combinedTimeSum, avgCombinedTime, minCombinedTime, maxCombinedTime;
 
-  
-    /*
-    static double GetRecorderFrameAverage(ProfilerRecorder recorder)
-    {
-        var samplesCount = recorder.Capacity;
-        if (samplesCount == 0) {
-            //Debug.Log("Zero samples");
-            return 0;
-        } else {
-            //Debug.Log("Recorder capacity: " + recorder.Capacity);
-        }
-
-        double r = 0;
-        unsafe
-        {
-            var samples = stackalloc ProfilerRecorderSample[samplesCount];
-            recorder.CopyTo(samples, samplesCount);
-            for (var i = 0; i < samplesCount; ++i) {
-                r += samples[i].Value;
-                //Debug.Log(samples[i].Value);
-            }
-            r /= samplesCount;
-        }
-
-        return r;
-    }
-    */
-    
-
-    /*
-    private unsafe double getAverage(ProfilerRecorder recorder) 
-    {
-        // frameCount++;
-        // double sum = 0;
-        // var samples = stackalloc ProfilerRecorderSample[frameCount];
-        // recorder.CopyTo(samples, frameCount);
-
-        // for (int i = 0; i < frameCount; i++) {
-        //     sum += samples[i].Value;
-        // }
-        // return sum / frameCount;
-
-        return -1;
-
-    }
-    */
 
     void OnEnable()
     {
@@ -80,10 +34,9 @@ public class Profiler : MonoBehaviour
         minDrawTime = 10000;
         maxDrawTime = -1;
         combinedTimeSum = 0;
-        avgCombinedTime = 0;
+        avgCombinedTime = -1;
         minCombinedTime = 10000;
         maxCombinedTime = -1;
-        //Debug.Log("FPS sum = " + fpsSum);
 
         // System Used Memory is recorded in kibibytes
         systemMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "System Used Memory");
@@ -115,7 +68,7 @@ public class Profiler : MonoBehaviour
             var drawTime = nsToMs(fpsRecorder.LastValue);
             var mainFPS = 1000.0 / (mainFPSRecorder.LastValue / 100.0);
 
-            var combinedTime = Time.unscaledDeltaTime * 1000;       // Convert to ms
+            var combinedTime = Time.unscaledDeltaTime * 1000;       // Convert seconds to ms
 
             if (fps < 0) {
                 fps = -1;
@@ -130,7 +83,7 @@ public class Profiler : MonoBehaviour
                 combinedTime = -1;
             }
 
-            // Sample FPS every 50 frames
+            // Sample FPS
             if (fps > 0) {
                 // Add to average
                 fpsSum = fpsSum + fps;
@@ -147,7 +100,7 @@ public class Profiler : MonoBehaviour
                 }
             }
 
-            // Sample draw time every 50 frames
+            // Sample draw time
             if (drawTime > 0) {
                 // Add to average
                 drawTimeSum = drawTimeSum + drawTime;
@@ -163,24 +116,6 @@ public class Profiler : MonoBehaviour
                     maxDrawTime = drawTime;
                 }
             }
-
-            /*
-            if (mainFPS > 0) {
-                // Add to average
-                mainFPSSum = mainFPSSum + mainFPS;
-                Debug.Log("Main FPS: " + mainFPS + ", sum: " + mainFPSSum );
-
-                // Check min
-                if (mainFPS < minMainFPS) {
-                    minMainFPS = mainFPS;
-                }
-                
-                // Check max
-                if (mainFPS > maxMainFPS) {
-                    maxMainFPS = mainFPS;
-                }
-            }
-            */
 
             if (combinedTime > 0) {
                 // Add to average
@@ -221,9 +156,11 @@ public class Profiler : MonoBehaviour
             }
 
 
-        // Update GUI readings at every sample interval
+            // Update GUI readings at every sample interval
             var sb = new StringBuilder(500);
-            // I think these are format strings for the StringBuilder?
+            // These are format strings for the StringBuilder
+            sb.AppendLine($"Frame Count: {frameCount}");
+            sb.AppendLine("--------------------");
             sb.AppendLine($"System Memory: {systemMemoryRecorder.LastValue / (1024 * 1024)} MB");
             sb.AppendLine();
             sb.AppendLine($"Draw Time (Render Thread): {drawTime:F2} ms");        // Render Thread returns time in nanoseconds, convert to milliseconds
@@ -231,7 +168,7 @@ public class Profiler : MonoBehaviour
             sb.AppendLine($"Min. Draw Time: {minDrawTime:F2} ms");
             sb.AppendLine($"Max. Draw Time: {maxDrawTime:F2} ms");
             sb.AppendLine();
-            sb.AppendLine($"Draw Time (Combined Threads): {combinedTime:F2} ms");        // Render Thread returns time in nanoseconds, convert to milliseconds
+            sb.AppendLine($"Draw Time (Combined Threads): {combinedTime:F2} ms");        
             sb.AppendLine($"Avg. Draw Time: {avgCombinedTime:F2} ms");
             sb.AppendLine($"Min. Draw Time: {minCombinedTime:F2} ms");
             sb.AppendLine($"Max. Draw Time: {maxCombinedTime:F2} ms");
@@ -245,10 +182,10 @@ public class Profiler : MonoBehaviour
             sb.AppendLine($"Avg. FPS: {calculateFPS(avgCombinedTime):F0}");
             sb.AppendLine($"Min FPS: {calculateFPS(minCombinedTime):F0}");
             sb.AppendLine($"Max FPS: {calculateFPS(maxCombinedTime):F0}");
-            sb.AppendLine();
-            sb.AppendLine($"Main Thread FPS: {mainFPS:F0}");
-            sb.AppendLine($"Draw Time (Main Thread): {mainFPSRecorder.LastValue / 100.0 :F0} ms");
-            //sb.AppendLine($"Avg. Draw Time (Main Thread): {mainFPSRecorder.LastValue / 100.0 :F0} ms");
+            // sb.AppendLine();
+            // sb.AppendLine($"Main Thread FPS: {mainFPS:F0}");
+            // sb.AppendLine($"Draw Time (Main Thread): {mainFPSRecorder.LastValue / 100.0 :F0} ms");
+            // sb.AppendLine($"Avg. Draw Time (Main Thread): {mainFPSRecorder.LastValue / 100.0 :F0} ms");
 
             statsText = sb.ToString();
         }
@@ -257,20 +194,14 @@ public class Profiler : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.TextArea(new Rect(10, 30, 250, 300), statsText);
+        GUI.TextArea(new Rect(10, 30, 250, 400), statsText);
     }
 
     /**
-    * Calculates frames per second. Takes the time between frames in nanoseconds and returns FPS
+    * Calculates frames per second. Takes the time between frames in milliseconds and returns FPS. 
+    * Returns -1 if framerate is negative.
     */
     private double calculateFPS(double ms) {
-        // double ms = ns / 1000000.0;
-
-        // // Profiler can sometimes return outliers that are near-zero
-        // if (ms < 1) {
-        //     return -1;
-        // } 
-
         var framerate = 1000.0 / ms;
 
         if (framerate <= 0) {
@@ -294,24 +225,4 @@ public class Profiler : MonoBehaviour
         }
 
     }
-
-    /*
-    private void getStats(double time, double sum, double min, double max) {
-        if (time > 0) {
-            // Add to average
-            sum += time;
-            Debug.Log("Main FPS: " + time + ", sum: " + sum );
-
-            // Check min
-            if (time < min) {
-                min = time;
-            }
-            
-            // Check max
-            if (time > max) {
-                max = time;
-            }
-        }
-    }
-    */
 }
