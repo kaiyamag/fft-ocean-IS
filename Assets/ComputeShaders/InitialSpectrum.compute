@@ -1,4 +1,17 @@
-﻿#pragma kernel CalculateInitialSpectrum
+﻿/**
+* InitialSpectrum.compute
+*
+* This compute shader implements the kernel functions required to calculate the
+* initial wave energy spectrum for the Fast Fourier Transform. No modifications 
+* were made to this class.
+*
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+#pragma kernel CalculateInitialSpectrum
 #pragma kernel CalculateConjugatedSpectrum
 
 static const float PI = 3.1415926;

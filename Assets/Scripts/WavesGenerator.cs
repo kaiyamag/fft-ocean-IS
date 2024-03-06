@@ -1,4 +1,19 @@
-﻿using UnityEditor;
+﻿/**
+* WavesGenerator.cs
+*
+* This class manages the calculation of ocean heightmap textures for three LOD
+* cascades. Results from `WavesCascade.cs` are synced. No modifications were made to this class.
+*
+* Significant Parameters:
+* size: Controls the number of waves sampled for the FFT.
+* 
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -10,7 +25,7 @@ public class WavesGenerator : MonoBehaviour
 
     // must be a power of 2
     [SerializeField]
-    int size = 256;
+    int size = 256;     // Controls the number of waves sampled in the FFT model
 
     [SerializeField]
     WavesSettings wavesSettings;

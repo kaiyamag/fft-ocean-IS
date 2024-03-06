@@ -1,3 +1,17 @@
+/**
+* GetProfilerCategories.cs
+*
+* This class provides a method to print all available ProfilerRecorders to the console
+* upon startup. This is necessary to determine what data the Unity project is able to
+* collect while profiling. This class can be added to any Unity project without
+* dependencies. This class is used verbatim from the Unity 2022.3 documentation.
+* 
+* Code References:
+* Original project: https://docs.unity3d.com/ScriptReference/Unity.Profiling.LowLevel.Unsafe.ProfilerRecorderDescription.html
+*
+* Kaiya Magnuson, 2024
+*/
+
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;

@@ -1,4 +1,17 @@
-﻿using System;
+﻿/**
+* WavesCascade.cs
+*
+* This class controls the invocation of kernel functions required to initialize
+* the wave energy spectrum, twiddle factors, and compute the Inverse Fast Fourier 
+* Transform. No modifications were made to this class.
+* 
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+using System;
 using UnityEngine;
 
 public class WavesCascade

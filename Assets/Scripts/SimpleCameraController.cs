@@ -1,4 +1,16 @@
-﻿#if ENABLE_INPUT_SYSTEM && ENABLE_INPUT_SYSTEM_PACKAGE
+﻿/**
+* SimpleCameraController.cs
+*
+* This class manages user-driven camera movement in the ocean scene. No modifications
+* were made to this class.
+* 
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+#if ENABLE_INPUT_SYSTEM && ENABLE_INPUT_SYSTEM_PACKAGE
 #define USE_INPUT_SYSTEM
     using UnityEngine.InputSystem;
     using UnityEngine.InputSystem.Controls;

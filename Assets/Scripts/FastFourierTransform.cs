@@ -1,4 +1,17 @@
-﻿using UnityEngine;
+﻿/**
+* FastFourierTransform.cs
+*
+* This class controls the invocation of kernel functions for the computation
+* of the inverse and regular Fast Fourier Transform. No modifications were made
+* to this class.
+* 
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+using UnityEngine;
 
 public class FastFourierTransform
 {

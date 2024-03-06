@@ -1,4 +1,17 @@
-﻿using UnityEngine;
+﻿/**
+* WavesSettings.cs
+*
+* This class sets up some of the parameters required for the calculation of the
+* wave energy spectrum and Fast Fourier Transform. No modifications were made to
+* this class.
+*
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+using UnityEngine;
 
 public struct SpectrumSettings
 {

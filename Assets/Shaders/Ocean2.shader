@@ -1,24 +1,26 @@
-﻿Shader "Ocean/Ocean2"
+﻿/*
+* Ocean2.shader
+*
+* This HLSL shader applies the heightmap textures produces by the Fast Fourier Transform
+* compute shader to the ocean mesh and applies a simple diffuse lighting model as
+* the fragment shader. The original version of this program included Jacobbian
+* foam generation in the fragment shader.
+*
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*
+*/
+
+Shader "Ocean/Ocean2"
 {
     Properties
     {
-        // ADDED: Deactivated some parameters
         _Color("Color", Color) = (1,1,1,1)
-        //_SSSColor("SSS Color", Color) = (1,1,1,1)
-        //_SSSStrength("SSSStrength", Range(0,1)) = 0.2
-        //_SSSScale("SSS Scale", Range(0.1,50)) = 4.0
-        //_SSSBase("SSS Base", Range(-5,1)) = 0
         _LOD_scale("LOD_scale", Range(1,10)) = 0
-        //_MaxGloss("Max Gloss", Range(0,1)) = 0
         _Roughness("Distant Roughness", Range(0,1)) = 0
-        //_RoughnessScale("Roughness Scale", Range(0, 0.01)) = 0.1
-        //_FoamColor("Foam Color", Color) = (1,1,1,1)
-        //_FoamTexture("Foam Texture", 2D) = "grey" {}
-        //_FoamBiasLOD0("Foam Bias LOD0", Range(0,7)) = 1
-        //_FoamBiasLOD1("Foam Bias LOD1", Range(0,7)) = 1
-        //_FoamBiasLOD2("Foam Bias LOD2", Range(0,7)) = 1
-        //_FoamScale("Foam Scale", Range(0,20)) = 1
-        //_ContactFoam("Contact Foam", Range(0,1)) = 1
+
 
 
         [Header(Cascade 0)]
@@ -107,15 +109,7 @@
         }
 
         fixed4 _Color;
-        // ADDED: Split across lines
-        //fixed4 _FoamColor, _SSSColor;
-        //float _SSSStrength;
         float _Roughness;
-        // ADDED: Split across lines
-        //float _RoughnessScale, _MaxGloss;
-        //float _FoamBiasLOD0, _FoamBiasLOD1, _FoamBiasLOD2, _FoamScale, _ContactFoam;
-        //sampler2D _CameraDepthTexture;
-        //sampler2D _FoamTexture;
 
         float3 WorldToTangentNormalVector(Input IN, float3 normal) {
             float3 t2w0 = WorldNormalVector(IN, float3(1, 0, 0));
@@ -148,55 +142,12 @@
 
             o.Normal = WorldToTangentNormalVector(IN, worldNormal);
 
-            // ADDED
             // Simplified diffuse shader
             float3 viewDir = normalize(IN.viewVector);
             float fresnel = dot(worldNormal, viewDir);
             o.Albedo = _Color + (0.1 * fresnel);
             o.Smoothness = 1.0 - (0.01 * (0.1 * fresnel));
-            //o.Smoothness = 1;
             o.Metallic = 0;
-
-            /*
-            
-            #if defined(CLOSE)
-            float jacobian = tex2D(_Turbulence_c0, IN.worldUV / LengthScale0).x
-                + tex2D(_Turbulence_c1, IN.worldUV / LengthScale1).x
-                + tex2D(_Turbulence_c2, IN.worldUV / LengthScale2).x;
-            jacobian = min(1, max(0, (-jacobian + _FoamBiasLOD2) * _FoamScale));
-            #elif defined(MID)
-            float jacobian = tex2D(_Turbulence_c0, IN.worldUV / LengthScale0).x
-                + tex2D(_Turbulence_c1, IN.worldUV / LengthScale1).x;
-            jacobian = min(1, max(0, (-jacobian + _FoamBiasLOD1) * _FoamScale));
-            #else
-            float jacobian = tex2D(_Turbulence_c0, IN.worldUV / LengthScale0).x;
-            jacobian = min(1, max(0, (-jacobian + _FoamBiasLOD0) * _FoamScale));
-            #endif
-
-            float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
-            float backgroundDepth =
-                LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV));
-            float surfaceDepth = UNITY_Z_0_FAR_FROM_CLIPSPACE(IN.screenPos.z);
-            float depthDifference = max(0, backgroundDepth - surfaceDepth - 0.1);
-            float foam = tex2D(_FoamTexture, IN.worldUV * 0.5 + _Time.r).r;
-            jacobian += _ContactFoam * saturate(max(0, foam - depthDifference) * 5) * 0.9;
-
-            o.Albedo = lerp(0, _FoamColor, jacobian);
-            float distanceGloss = lerp(1 - _Roughness, _MaxGloss, 1 / (1 + length(IN.viewVector) * _RoughnessScale));
-            o.Smoothness = lerp(distanceGloss, 0, jacobian);
-            o.Metallic = 0;
-
-            float3 viewDir = normalize(IN.viewVector);
-            float3 H = normalize(-worldNormal + _WorldSpaceLightPos0);
-            float ViewDotH = pow5(saturate(dot(viewDir, -H))) * 30 * _SSSStrength;
-            fixed3 color = lerp(_Color, saturate(_Color + _SSSColor.rgb * ViewDotH * IN.lodScales.w), IN.lodScales.z);
-
-            float fresnel = dot(worldNormal, viewDir);
-            fresnel = saturate(1 - fresnel);
-            fresnel = pow5(fresnel);
-
-            o.Emission = lerp(color * (1 - fresnel), 0, jacobian);
-            */
         }
         ENDCG
     }

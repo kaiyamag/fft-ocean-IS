@@ -160,7 +160,7 @@ MonoBehaviour:
   updateMaterialProperties: 0
   showMaterialLods: 0
   lengthScale: 15
-  vertexDensity: 8
+  vertexDensity: 32
   clipLevels: 8
 --- !u!114 &77222649
 MonoBehaviour:

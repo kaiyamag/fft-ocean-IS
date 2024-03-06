@@ -1,4 +1,16 @@
-﻿#pragma kernel CalculateAmplitudes
+﻿/**
+* TimeDependentSpectrum.compute
+*
+* This compute shader implements the kernel functions required to calculate the
+* amplitude at a given vertex and time. No modifications were made to this class.
+*
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+#pragma kernel CalculateAmplitudes
 
 RWTexture2D<float2> Dx_Dz;
 RWTexture2D<float2> Dy_Dxz;

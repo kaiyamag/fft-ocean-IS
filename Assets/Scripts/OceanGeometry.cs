@@ -1,4 +1,20 @@
-﻿using System.Collections.Generic;
+﻿/**
+* OceanGeometry.cs
+*
+* This class controls the instantiation of ocean tile objects in Unity. This class
+* is modified from the original to remove mesh tiling and level-of-detail cascades.
+* Code that is removed from the original is left in comments.
+*
+* Significant Parameters:
+* vertexDensity: Controls the dimension of the ocean mesh.
+* 
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class OceanGeometry : MonoBehaviour
@@ -16,8 +32,8 @@ public class OceanGeometry : MonoBehaviour
 
     [SerializeField]
     float lengthScale = 10;
-    [SerializeField, Range(1, 512)] // UPDATED range from 40 to 512 for benchmarking
-    int vertexDensity = 30;
+    [SerializeField, Range(1, 512)]     // Updated upper range from 40 to 512 for benchmarking
+    int vertexDensity = 30;             // vertexDensity times 8 equals the dimension of the ocean mesh
     [SerializeField, Range(0, 8)]
     int clipLevels = 8;
     [SerializeField, Range(0, 100)]

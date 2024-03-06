@@ -1,4 +1,17 @@
-﻿#pragma kernel PrecomputeTwiddleFactorsAndInputIndices
+﻿/**
+* FastFourierTransform.compute
+*
+* This compute shader implements the kernel functions required to calculate the
+* inverse and regular Fast Fourier Transforms. No modifications were made to 
+* this class.
+*
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+#pragma kernel PrecomputeTwiddleFactorsAndInputIndices
 #pragma kernel HorizontalStepFFT
 #pragma kernel VerticalStepFFT
 #pragma kernel HorizontalStepInverseFFT

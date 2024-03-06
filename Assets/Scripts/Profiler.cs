@@ -1,3 +1,19 @@
+/*
+* Profiler.cs
+*
+* This class samples average , minimum , and maximum frame rate (FPS), draw time (ms), and memory usage (MB)
+* for any Godot project . Performance data is sampled every 10 frames (see ‘sample_rate ‘) and averages are
+* calculated every 500 frames (see ‘print_rate ‘). The latest performance data and number of elapsed frames are
+* displayed in a GUI overlay of the Godot project .
+*
+* This class can be added without dependencies to any Godot project
+*
+* Code References :
+* Basic ProfilerRecorder example: https://docs.unity3d.com/ScriptReference/Unity.Profiling.ProfilerRecorder.html
+*
+* Copyright Kaiya Magnuson 2024
+*/
+
 using System.Collections.Generic;
 using System.Text;
 using Unity.Profiling;
@@ -9,17 +25,14 @@ using TMPro;
 */
 public class Profiler : MonoBehaviour
 {
-    string statsText;
-    ProfilerRecorder systemMemoryRecorder;
-    ProfilerRecorder mainThreadTimeRecorder;
-    ProfilerRecorder fpsRecorder;
-    ProfilerRecorder mainFPSRecorder;
+    string statsText;                           // String builder for stats printout
+    ProfilerRecorder systemMemoryRecorder;      // Gets current memory usage readings
+    ProfilerRecorder fpsRecorder;               // Gets current frame rate readings
 
-    private int frameCount;
-    private double fpsSum, avgFPS, minFPS, maxFPS;
-    private double mainFPSSum, avgMainFPSSum, minMainFPS, maxMainFPS;
-    private double drawTimeSum, avgDrawTime, minDrawTime, maxDrawTime;
-    private double combinedTimeSum, avgCombinedTime, minCombinedTime, maxCombinedTime;
+    private int frameCount;                                                                 // The number of elapsed frames , used for averaging
+    private double fpsSum, avgFPS, minFPS, maxFPS;                                          // Accumulators for frame rate
+    private double drawTimeSum, avgDrawTime, minDrawTime, maxDrawTime;                      // Accumulators for draw time (GPU only)
+    private double combinedTimeSum, avgCombinedTime, minCombinedTime, maxCombinedTime;      // Accumulators for draw time (GPU and CPU)
 
 
     void OnEnable()
@@ -27,15 +40,15 @@ public class Profiler : MonoBehaviour
         frameCount = 0;
         fpsSum = 0;
         avgFPS = -1;
-        minFPS = 10000;
+        minFPS = 10000;     // Minimum FPS is not expected to exit the range [0 ,10000]
         maxFPS = -1;
         drawTimeSum = 0;
         avgDrawTime = -1;
-        minDrawTime = 10000;
+        minDrawTime = 10000;    // Minimum draw time is not expected to exit the range [0 ,1000]
         maxDrawTime = -1;
         combinedTimeSum = 0;
         avgCombinedTime = -1;
-        minCombinedTime = 10000;
+        minCombinedTime = 10000;    // Minimum draw time is not expected to exit the range [0 ,1000]
         maxCombinedTime = -1;
 
         // System Used Memory is recorded in kibibytes
@@ -43,41 +56,32 @@ public class Profiler : MonoBehaviour
 
         // Render Thread is recorded in nanoseconds
         fpsRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Render Thread"); 
-
-        // Main Thread is recorded in deciseconds (divide by 100 to get milliseconds)   
-        mainFPSRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Main Thread");     
     }
 
     void OnDisable()
     {
         systemMemoryRecorder.Dispose();
-        mainThreadTimeRecorder.Dispose();
         fpsRecorder.Dispose();
     }
 
     void Update()
     {
         frameCount++;
-        var sampleInterval = 10;
-        var avgInterval = 500;
+        var sampleInterval = 10;    // Number of frames to wait between each profiler sample
+        var avgInterval = 500;      // Number of frames to wait between calculating and printing averages
 
         if (frameCount % sampleInterval == 0) {
 
             // Get stats for current frame
-            var fps = calculateFPS(nsToMs(fpsRecorder.LastValue));
-            var drawTime = nsToMs(fpsRecorder.LastValue);
-            var mainFPS = 1000.0 / (mainFPSRecorder.LastValue / 100.0);
-
-            var combinedTime = Time.unscaledDeltaTime * 1000;       // Convert seconds to ms
+            var fps = calculateFPS(nsToMs(fpsRecorder.LastValue));  // Tracks current frame rate
+            var drawTime = nsToMs(fpsRecorder.LastValue);           // Tracks draw time for the GPU
+            var combinedTime = Time.unscaledDeltaTime * 1000;       // Tracks draw time for the CPU and GPU combined
 
             if (fps < 0) {
                 fps = -1;
             }
             if (drawTime < 0) {
                 drawTime = -1;
-            }
-            if (mainFPS < 0) {
-                mainFPS = -1;
             }
             if (combinedTime < 0) {
                 combinedTime = -1;
@@ -87,49 +91,40 @@ public class Profiler : MonoBehaviour
             if (fps > 0) {
                 // Add to average
                 fpsSum = fpsSum + fps;
-                //Debug.Log("FPS: " + fps + ", sum: " + fpsSum );
-
                 // Check min
                 if (fps < minFPS && fps >= 0) {
                     minFPS = fps;
                 }
-                
                 // Check max
                 if (fps > maxFPS) {
                     maxFPS = fps;
                 }
             }
 
-            // Sample draw time
+            // Sample draw time on GPU only
             if (drawTime > 0) {
                 // Add to average
                 drawTimeSum = drawTimeSum + drawTime;
-                //Debug.Log("Draw Time: " + drawTime + ", sum: " + drawTimeSum );
-
                 // Check min
                 if (drawTime < minDrawTime && drawTime >= 0) {
                     minDrawTime = drawTime;
                 }
-                
                 // Check max
                 if (drawTime > maxDrawTime) {
                     maxDrawTime = drawTime;
                 }
             }
 
+            // Sample draw time on CPU and GPU
             if (combinedTime > 0) {
                 // Add to average
                 combinedTimeSum = combinedTimeSum + combinedTime;
-                //Debug.Log("Combined time: " + combinedTime + ", sum: " + combinedTimeSum );
-
                 // Check min
                 if (combinedTime < minCombinedTime) {
                     minCombinedTime = combinedTime;
                 }
-                
                 // Check max
                 if (combinedTime > maxCombinedTime) {
-                    //Debug.Log("Update max from " + calculateFPS(maxCombinedTime) + " to " + calculateFPS(combinedTime));
                     maxCombinedTime = combinedTime;
                 }
             }
@@ -139,23 +134,14 @@ public class Profiler : MonoBehaviour
                 // Calculate averages
                 avgFPS = fpsSum / (avgInterval / sampleInterval);
                 avgDrawTime = drawTimeSum / (avgInterval / sampleInterval);
-                avgMainFPSSum = mainFPSSum / (avgInterval / sampleInterval);
                 avgCombinedTime = combinedTimeSum / (avgInterval / sampleInterval);
-
-                // Debug
-                // Debug.Log("~~~~~Got average~~~~");
-                // Debug.Log("Avg FPS = " + fpsSum + " / " + (avgInterval / sampleInterval) + " = " + avgFPS);
-                // Debug.Log("Avg Draw Time = " + drawTimeSum + " / " + (avgInterval / sampleInterval) + " = " + avgDrawTime);
-                // Debug.Log("Avg Combined Time = " + combinedTimeSum + " / " + (avgInterval / sampleInterval) + " = " + avgCombinedTime);
 
                 // Reset averages
                 frameCount = 0;
                 fpsSum = 0;
                 drawTimeSum = 0;
-                mainFPSSum = 0;
                 combinedTimeSum = 0;
             }
-
 
             // Update GUI readings at every sample interval
             var sb = new StringBuilder(500);
@@ -185,16 +171,14 @@ public class Profiler : MonoBehaviour
             sb.AppendLine($"Max. Draw Time: {maxDrawTime:F2} ms");
             sb.AppendLine();
             
-            // sb.AppendLine();
-            // sb.AppendLine($"Main Thread FPS: {mainFPS:F0}");
-            // sb.AppendLine($"Draw Time (Main Thread): {mainFPSRecorder.LastValue / 100.0 :F0} ms");
-            // sb.AppendLine($"Avg. Draw Time (Main Thread): {mainFPSRecorder.LastValue / 100.0 :F0} ms");
-
             statsText = sb.ToString();
         }
 
     }
 
+    /**
+    * Prepares a text box in the scene GUI
+    */
     void OnGUI()
     {
         GUI.TextArea(new Rect(10, 30, 300, 400), statsText);
@@ -226,6 +210,5 @@ public class Profiler : MonoBehaviour
         } else {
             return ms;
         }
-
     }
 }

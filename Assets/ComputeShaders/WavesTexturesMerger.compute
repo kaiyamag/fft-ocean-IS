@@ -1,4 +1,16 @@
-﻿#pragma kernel FillResultTextures
+﻿/**
+* WavesTexturesMerger.compute
+*
+* This compute shader implements the kernel functions required to combine the ocean
+* heightmap textures and foam textures. No modifications were made to this class.
+*
+* Code References:
+* Original project: https://github.com/gasgiant/FFT-Ocean
+*
+* Kaiya Magnuson, 2024
+*/
+
+#pragma kernel FillResultTextures
 
 RWTexture2D<float3> Displacement;
 RWTexture2D<float4> Derivatives;
